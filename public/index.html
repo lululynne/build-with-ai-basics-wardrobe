@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f0e0e3">
+  <meta name="description" content="把真实衣服变成插画图鉴，轻松照顾自己的衣柜。">
+  <title>衣服图鉴 · Illustrated wardrobe</title>
+  <link rel="icon" href="/art/icons/wardrobe-keep.png" type="image/png">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="brand" href="#home"><img src="/art/icons/wardrobe-keep.png" alt="" width="44" height="44"><span><strong id="brand-title">衣服图鉴</strong><small>MY LITTLE WARDROBE</small></span></a>
+      <div class="header-actions"><span class="saved-indicator" id="saved-indicator">已保存于这台 Mac</span><button class="language-button" id="language-button" type="button" aria-label="Switch to English">EN</button></div>
+    </header>
+    <div id="review-banner" class="review-banner" hidden></div>
+    <nav class="app-nav" id="app-nav" aria-label="主要导航"></nav>
+    <main id="app" tabindex="-1"><div class="loading-screen"><span class="spinner"></span><p>正在打开衣柜…</p></div></main>
+    <footer class="app-footer" id="app-footer">慢慢收集，好好穿着。</footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

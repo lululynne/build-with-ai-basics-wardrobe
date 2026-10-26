@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Illustrated wardrobe · Code map</title><style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#51454a;background:#fcf8f5;line-height:1.75}body{max-width:940px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(26px,5vw,40px);line-height:1.4;margin:12px 0}h2{font-size:21px;margin-top:38px}h3{font-size:17px;margin:0 0 8px}p{margin:10px 0}a{color:#795263;text-underline-offset:4px}a:focus-visible{outline:3px solid #795263;outline-offset:4px}.eyebrow{letter-spacing:.18em;font-size:11px;color:#8b6978}.lead{color:#79666e;max-width:760px}.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:28px 0;list-style:none;padding:0}.flow li{background:#efe1e6;padding:19px;border-radius:18px;border:1px solid #dbc5ce}.flow strong,.flow small{display:block}.flow small{font-size:12px;overflow-wrap:anywhere}.flow .number{font-size:12px;color:#8c6879;margin-bottom:10px}.panel{background:#fffdfa;border:1px solid #e7d7dc;border-radius:18px;padding:22px;margin:14px 0}code{font:12px ui-monospace,SFMono-Regular,monospace;background:#f0e7e8;padding:3px 6px;border-radius:5px;overflow-wrap:anywhere}pre{background:#f0e7e8;padding:15px;border-radius:10px;overflow-x:auto}pre code{padding:0}.route{padding-left:24px}.route li{margin-bottom:22px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;vertical-align:top;border-bottom:1px solid #e7d7dc;padding:13px 8px}.snapshot{font-size:12px;color:#79666e;overflow-wrap:anywhere}details{margin:20px 0}summary{cursor:pointer;font-weight:600}@media(max-width:650px){body{padding:26px 18px}.flow{grid-template-columns:repeat(2,minmax(0,1fr))}table{font-size:12px}th,td{padding:10px 5px}}
+</style></head><body>
+<p class="eyebrow">ILLUSTRATED WARDROBE · A REFERENCE MAP</p>
+<h1>How an outfit becomes a saved wear record</h1>
+<p class="lead">The browser selects clothes and displays results. The local Node service validates and saves them. Gemini generates garment illustrations; originals and results remain separate. This reference works offline without scripts or external services.</p>
+<ol class="flow" aria-label="Wear record data flow">
+<li><span class="number">01 · Select</span><strong>Record this outfit</strong><small>public/app.js<br>prepareWear → mutate</small></li>
+<li><span class="number">02 · Validate</span><strong>Resolve sets and request IDs</strong><small>server.mjs · POST /api/actions<br>src/domain.mjs · applyAction</small></li>
+<li><span class="number">03 · Save</span><strong>Serialize and replace the file</strong><small>src/store.mjs<br>transaction → persist</small></li>
+<li><span class="number">04 · Display</span><strong>Derive counts from history</strong><small>src/domain.mjs · viewState<br>public/app.js · render</small></li>
+</ol>
+<h2>Three places to inspect</h2>
+<ol class="route">
+<li><strong>Entry: <a href="../public/app.js">public/app.js</a>; search <code>prepareWear</code>, <code>mutate</code> and <code>commitPending</code>.</strong><p>After choosing garments and resolving a saved or new set, the browser makes one explicit save. A disconnected request keeps the same ID and full payload for retry.</p></li>
+<li><strong>Rules: <a href="../src/domain.mjs">src/domain.mjs</a>; find <code>wear.record</code> in <code>applyAction</code>.</strong><p>The same request creates one event. Another deliberate outfit change gets a new ID. Shared garments count once within an outfit. Events preserve the set membership snapshot even after archival.</p></li>
+<li><strong>Storage: <a href="../src/store.mjs">src/store.mjs</a>, <code>transaction</code> and <code>persist</code>; then <code>viewState</code> in the domain module.</strong><p>Rules apply to a new snapshot. A temporary file replaces the saved file before in-memory state updates. Counts are derived from events, so removing a mistaken event also corrects related counts.</p></li>
+</ol>
+<h2>Where to make a change</h2>
+<table><thead><tr><th>Behavior</th><th>Source</th></tr></thead><tbody>
+<tr><td>English/Chinese labels and reminder</td><td><a href="../public/i18n.js">public/i18n.js</a>, <code>strings</code></td></tr>
+<tr><td>Palette, cards and mobile layout</td><td><a href="../public/styles.css">public/styles.css</a>, <code>:root</code> and media queries</td></tr>
+<tr><td>Garment illustration prompt</td><td><a href="../src/gemini.mjs">src/gemini.mjs</a>, <code>GARMENT_PROMPT</code> and <code>generateImage</code></td></tr>
+<tr><td>Review dates and linked archival</td><td><a href="../src/domain.mjs">src/domain.mjs</a>, <code>reviewStatus</code>, <code>archiveGarment</code>, <code>completeReviewIfFinished</code></td></tr>
+<tr><td>Repeated outfits, retries and failed saves</td><td><a href="../test/domain.test.mjs">domain tests</a>, <a href="../test/review.test.mjs">review tests</a>, <a href="../test/store.test.mjs">store tests</a></td></tr>
+</tbody></table>
+<h2>A reusable practice</h2><div class="panel"><h3>Write down what “count once” means</h3><p>Wearing the same top in two actual outfit changes counts twice. Retrying one interrupted save still counts once. The <a href="prd.md">PRD</a> defines these cases; the domain test named <code>same deliberate save is idempotent; a separate same-day outfit counts again</code> checks the distinction. Another project can start by writing two easily confused examples before choosing its deduplication rule.</p><p>The actual Gemini intake was checked separately. Automated storage/domain tests use isolated synthetic data. A mobile-sized browser and a physical phone are separate verification states.</p></div>
+<h2>Run again</h2><pre><code>npm start
+# http://127.0.0.1:4317
+
+npm run start:lan
+# On the same trusted network, use the printed Phone address.
+
+npm run check
+npm test</code></pre>
+<p>The server-only credential stays in <code>.env</code>. Private wardrobe data and images stay in <code>data/</code>. Both are excluded from Git.</p>
+<details><summary>What this map establishes</summary><p>This is a code reference, not evidence of a completed learner walkthrough. Implementation checks, learner review, phone testing, publication and submission remain distinct in <a href="checklist.md">the checklist</a>. Illustration quality still requires comparison against each original.</p></details>
+<p class="snapshot">Source: the exported release candidate, including the initial-navigation correction. <a href="../README.md">Setup instructions</a>.</p></body></html>

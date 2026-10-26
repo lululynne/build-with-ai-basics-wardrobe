@@ -1,0 +1,13 @@
+/devpost/learner-profile.md
+.env
+.env.*
+!.env.example
+/.local/
+node_modules/
+dist/
+.DS_Store
+/data/
+/图标UI-无背景/
+/衣服真实素材图片/
+/图鉴生成样图参考/
+/新版图标ui/

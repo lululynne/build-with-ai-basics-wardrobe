@@ -1,0 +1,13 @@
+{
+  "name": "illustrated-wardrobe-local",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {"node": ">=24"},
+  "scripts": {
+    "start": "node server.mjs",
+    "start:lan": "node server.mjs --lan",
+    "test": "node --test",
+    "check": "node --check server.mjs && node --check src/domain.mjs && node --check src/store.mjs && node --check src/gemini.mjs && node --check public/app.js"
+  }
+}
